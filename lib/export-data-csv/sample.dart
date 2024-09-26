@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:csv/csv.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xls;
 
 class DataTablePage extends StatelessWidget {
   final List<Map<String, dynamic>> data = [
@@ -10,37 +10,26 @@ class DataTablePage extends StatelessWidget {
     {'Name': 'Charlie', 'Age': 35, 'City': 'Chicago'},
   ];
 
-  Future<void> _createExcel() async {
-    // Create a new Excel document
-    final xls.Workbook workbook = xls.Workbook();
-    final xls.Worksheet sheet = workbook.worksheets[0];
+  Future<void> _createCsv() async {
+    List<List<dynamic>> rows = [];
+    rows.add(['Name', 'Age', 'City']); // Header row
 
-    // Adding headers
-    sheet.getRangeByName('A1').setValue('Name');
-    sheet.getRangeByName('B1').setValue('Age');
-    sheet.getRangeByName('C1').setValue('City');
-
-    // Adding data
-    for (int i = 0; i < data.length; i++) {
-      sheet.getRangeByName('A${i + 2}').setValue(data[i]['Name']);
-      sheet.getRangeByName('B${i + 2}').setValue(data[i]['Age']);
-      sheet.getRangeByName('C${i + 2}').setValue(data[i]['City']);
+    // Add data rows
+    for (var row in data) {
+      rows.add([row['Name'], row['Age'], row['City']]);
     }
 
-    // Save the Excel file
-    final List<int> bytes = workbook.saveAsStream();
-    workbook.dispose();
+    String csv = const ListToCsvConverter().convert(rows);
 
-    // Get the directory to save the file
+    // Save the CSV file
     final directory = await getApplicationDocumentsDirectory();
-    final String path = '${directory.path}/data.xlsx';
+    final String path = '${directory.path}/data.csv';
     final File file = File(path);
 
-    // Write the bytes to the file
-    await file.writeAsBytes(bytes, flush: true);
+    await file.writeAsString(csv);
 
     // Show a message or perform any action after saving
-    print('Excel file created: ${file.path}');
+    print('CSV file created: ${file.path}');
   }
 
   @override
@@ -67,8 +56,8 @@ class DataTablePage extends StatelessWidget {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _createExcel,
-              child: Text('Convert to Excel'),
+              onPressed: _createCsv,
+              child: Text('Convert to CSV'),
             ),
           ],
         ),
