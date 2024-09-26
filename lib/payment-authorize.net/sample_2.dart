@@ -40,8 +40,8 @@ class _MyAppState extends State<MyApp> {
           cardCvv: '900',
           zipCode: '30028',
           cardHolderName: 'Jeremiah',
-          apiLoginId: 'Your-Api-Login-Id',
-          clientId: 'Your-Client-Id');
+          apiLoginId: '9Tq5kS8V',
+          clientId: '927Rc69uWsaQ27kGQ7htBNfGvuEvn82aWQmTx9TKAukMA7U6Sm87SfHrM5cS3mju');
     } on PlatformException {
       authorizeNet = 'Failed to get platform version.';
     }
